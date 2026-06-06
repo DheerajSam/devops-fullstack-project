@@ -1,0 +1,13 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+
+# Keep or remove lock file depending on preference
+# .terraform.lock.hcl
+
+# SSH keys
+*.pem
+
+# VS Code
+.vscode/

@@ -171,10 +171,10 @@ resource "aws_iam_instance_profile" "ec2_profile" {
 }
 
 # ── KEY PAIR ──
-resource "aws_key_pair" "main" {
-  key_name   = "${var.project_name}-key"
-  public_key = file("~/.ssh/devops-key.pub")
-}
+#resource "aws_key_pair" "main" {
+#  key_name   = "${var.project_name}-key"
+#  public_key = file("~/.ssh/devops-key.pub")
+#}
 
 # ── EC2 INSTANCE ──
 data "aws_ami" "ubuntu" {
