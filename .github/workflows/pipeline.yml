@@ -3,8 +3,6 @@ name: DevOps Fullstack Pipeline
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 env:
   APP_NAME: devops-fullstack-app
@@ -50,8 +48,24 @@ jobs:
         docker push ${{ env.DOCKER_IMAGE }}:${{ github.run_number }}
         docker push ${{ env.DOCKER_IMAGE }}:latest
 
-    - name: Pipeline Summary
-      run: |
-        echo "✅ Build complete!"
-        echo "📦 Image: ${{ env.DOCKER_IMAGE }}:${{ github.run_number }}"
-        echo "🐳 DockerHub: hub.docker.com/r/${{ secrets.DOCKERHUB_USERNAME }}/devops-fullstack-app"
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Deploy to EC2 via SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          kubectl apply -f https://raw.githubusercontent.com/DheerajSam/devops-fullstack-project/main/k8s/deployment.yaml
+          kubectl apply -f https://raw.githubusercontent.com/DheerajSam/devops-fullstack-project/main/k8s/service.yaml
+          kubectl set image deployment/devops-fullstack-app app=${{ secrets.DOCKERHUB_USERNAME }}/devops-fullstack-app:latest
+          kubectl rollout status deployment/devops-fullstack-app
+          echo "✅ Deployment complete!"
