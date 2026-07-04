@@ -176,9 +176,10 @@ git push origin main
 
 🧹 Cleanup
 
-bash
 # Destroy EC2 (SonarQube server)
+
 cd terraform
+
 terraform destroy
 
 💡 Interview Talking Points
