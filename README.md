@@ -133,7 +133,8 @@ Trivy scanning the Docker image for CVEs — showing CRITICAL and HIGH severity 
 
 1. Set Up SonarQube on EC2
 
-bash# SSH into EC2
+bash
+# SSH into EC2
 ssh -i ~/.ssh/devops-key ubuntu@EC2-IP
 
 # Install Docker
@@ -164,7 +165,8 @@ SecretValueSONAR_TOKENSonarQube tokenSONAR_HOST_URLhttp://EC2-IP:9000DOCKERHUB_U
 
 4. Push Code — Pipeline Triggers Automatically
 
-bashgit add .
+bash
+git add .
 git commit -m "Trigger DevSecOps pipeline"
 git push origin main
 
@@ -174,7 +176,8 @@ git push origin main
 
 🧹 Cleanup
 
-bash# Destroy EC2 (SonarQube server)
+bash
+# Destroy EC2 (SonarQube server)
 cd terraform
 terraform destroy
 
@@ -182,8 +185,11 @@ terraform destroy
 
 
 "What is DevSecOps?" — Integrating security into every stage of the DevOps pipeline rather than treating it as a separate phase at the end
+
 "What is Trivy?" — An open-source vulnerability scanner for containers, file systems, and Git repos — scans for CVEs in OS packages and application dependencies
+
 "What is SonarQube?" — A static code analysis tool that detects bugs, security vulnerabilities, and code smells before code reaches production
+
 "What is shift-left security?" — Moving security checks earlier in the development process — catching vulnerabilities at code commit rather than after deployment
 
 
