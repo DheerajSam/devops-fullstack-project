@@ -117,17 +117,17 @@ Rolling update — zero downtime deployment
 1. Full Pipeline — All 4 Stages Green
 Complete DevSecOps pipeline passing all security gates — SonarQube quality scan, Trivy vulnerability scan, Docker build, and Kubernetes deployment all completing successfully in under 2 minutes.
 
-Show Image
+![Pipeline Success](pipeline-success.png)
 
 2. SonarQube Dashboard — Code Analysis Results
 Self-hosted SonarQube running on AWS EC2 showing code quality metrics — bugs, vulnerabilities, code smells, and security hotspots detected in the Node.js application source code.
 
-Show Image
+![Sonarqube Dashboard](sonarqube-dashboard.png)
 
 3. Trivy Scan Output — Vulnerability Report
 Trivy scanning the Docker image for CVEs — showing CRITICAL and HIGH severity vulnerabilities found in OS packages and application dependencies.
 
-Show Image
+![Trivy Scan](trivy-scan.png)
 
 🚀 How to Reproduce
 
