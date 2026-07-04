@@ -170,7 +170,7 @@ git push origin main
 
 🔐 Security Concepts Demonstrated
 
-ConceptImplementationShift Left SecuritySecurity scans run before build — not after deploymentSASTStatic Application Security Testing via SonarQubeContainer SecurityImage vulnerability scanning via TrivySecurity GatesPipeline blocks deployment if CRITICAL CVEs foundSelf-hosted Security ToolsSonarQube on EC2 — no SaaS dependency
+<img width="678" height="250" alt="image" src="https://github.com/user-attachments/assets/bf24e82a-0900-4688-b7f1-397e15b9e566" />
 
 🧹 Cleanup
 
