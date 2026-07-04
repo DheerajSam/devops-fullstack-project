@@ -161,11 +161,10 @@ Generate token → copy it
 
 3. Add GitHub Secrets
 
-SecretValueSONAR_TOKENSonarQube tokenSONAR_HOST_URLhttp://EC2-IP:9000DOCKERHUB_USERNAMEDockerHub usernameDOCKERHUB_TOKENDockerHub access tokenEC2_HOSTEC2 public IPEC2_SSH_KEYPrivate SSH key contents
+<img width="672" height="297" alt="image" src="https://github.com/user-attachments/assets/ee12c1b7-4d75-4d16-9604-20fc9b4ab9f9" />
 
 4. Push Code — Pipeline Triggers Automatically
 
-bash
 git add .
 git commit -m "Trigger DevSecOps pipeline"
 git push origin main
