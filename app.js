@@ -42,4 +42,8 @@ app.get('/metrics', (req, res) => {
   res.send(`# HELP app_requests_total Total requests\n# TYPE app_requests_total counter\napp_requests_total 100\n`);
 });
 
-app.listen(PORT, () => console.log(`App running on port ${PORT}`));
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`App running on port ${PORT}`));
+}
+
+module.exports = app;
