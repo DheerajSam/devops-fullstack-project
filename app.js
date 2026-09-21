@@ -1,9 +1,24 @@
 const express = require('express');
 const client = require('prom-client');
 client.collectDefaultMetrics();
+const httpRequestCounter = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'route', 'status_code']
+});
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    httpRequestCounter.inc({
+      method: req.method,
+      route: req.route?.path || req.path,
+      status_code: res.statusCode
+    });
+  });
 
+  next();
+});
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
