@@ -6,15 +6,31 @@ const httpRequestCounter = new client.Counter({
   help: 'Total number of HTTP requests',
   labelNames: ['method', 'route', 'status_code']
 });
+const httpRequestDuration = new client.Histogram({
+  name: 'http_request_duration_seconds',
+  help: 'HTTP request duration in seconds',
+  labelNames: ['method', 'route', 'status_code']
+});
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.use((req, res, next) => {
+  const start = process.hrtime(); 
   res.on('finish', () => {
     httpRequestCounter.inc({
       method: req.method,
       route: req.route?.path || req.path,
       status_code: res.statusCode
     });
+  const [seconds, nanoseconds] = process.hrtime(start);
+  const duration = seconds + nanoseconds / 1e9;
+
+    httpRequestDuration.observe({
+      method: req.method,
+      route: req.route?.path || req.path,
+      status_code: res.statusCode
+    },
+    duration
+    );
   });
 
   next();
