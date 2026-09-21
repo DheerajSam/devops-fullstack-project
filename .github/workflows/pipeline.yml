@@ -57,10 +57,14 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install Dependencies
-      run: npm install
+    - name: Install Dependencies 
+      run: npm ci
 
-    - name: Run Health Check
+    - name: Run Tests
+      run: npm test
+    
+
+    - name: Run Health Check 
       run: |
         npm start &
         sleep 5
