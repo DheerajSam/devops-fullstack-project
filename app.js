@@ -1,4 +1,6 @@
 const express = require('express');
+const client = require('prom-client');
+client.collectDefaultMetrics();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -37,9 +39,9 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy', timestamp: new Date(), version: process.env.APP_VERSION || 'v1.0' });
 });
 
-app.get('/metrics', (req, res) => {
-  res.set('Content-Type', 'text/plain');
-  res.send(`# HELP app_requests_total Total requests\n# TYPE app_requests_total counter\napp_requests_total 100\n`);
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
 });
 
 if (require.main === module) {
