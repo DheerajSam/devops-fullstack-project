@@ -27,7 +27,7 @@ jobs:
   #       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   #       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
-    build-test-scan-push:
+  build-test-scan-push:
     name: Build, Test, Scan and Push
     runs-on: ubuntu-latest
 
@@ -88,7 +88,6 @@ jobs:
         run: |
           docker push ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
           docker push ${{ env.DOCKER_IMAGE }}:latest
-
   deploy:
     if: ${{ false }}
     name: Deploy to Kubernetes
@@ -96,18 +95,18 @@ jobs:
     needs: build-test-scan-push
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v7
+      - name: Checkout Code
+        uses: actions/checkout@v7
 
-    - name: Deploy to EC2 via SSH
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          kubectl apply -f https://raw.githubusercontent.com/DheerajSam/devops-fullstack-project/main/k8s/deployment.yaml
-          kubectl apply -f https://raw.githubusercontent.com/DheerajSam/devops-fullstack-project/main/k8s/service.yaml
-          kubectl set image deployment/devops-fullstack-app app=${{ secrets.DOCKERHUB_USERNAME }}/devops-fullstack-app:${{ github.sha }}
-          kubectl rollout status deployment/devops-fullstack-app
-          echo "✅ Deployment complete!"
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            kubectl apply -f https://raw.githubusercontent.com/DheerajSam/devops-fullstack-project/main/k8s/deployment.yaml
+            kubectl apply -f https://raw.githubusercontent.com/DheerajSam/devops-fullstack-project/main/k8s/service.yaml
+            kubectl set image deployment/devops-fullstack-app app=${{ secrets.DOCKERHUB_USERNAME }}/devops-fullstack-app:${{ github.sha }}
+            kubectl rollout status deployment/devops-fullstack-app
+            echo "✅ Deployment complete!"
