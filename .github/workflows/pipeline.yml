@@ -7,6 +7,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: devops-fullstack-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   APP_NAME: devops-fullstack-app
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/devops-fullstack-app
@@ -30,6 +34,7 @@ jobs:
   build-test-scan-push:
     name: Build, Test, Scan and Push
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout Code
@@ -49,14 +54,22 @@ jobs:
 
       - name: Run Health Check
         run: |
+          set -e
+
           npm start &
           APP_PID=$!
+
+          cleanup() {
+          kill $APP_PID 2>/dev/null || true
+          }
+
+          trap cleanup EXIT
+
           sleep 5
-          curl -f http://localhost:3000/health
-          kill $APP_PID
+          curl --fail --retry 3 --retry-delay 2 http://localhost:3000/health
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to DockerHub
         uses: docker/login-action@v4
@@ -65,7 +78,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker Image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           push: false
@@ -92,6 +105,7 @@ jobs:
     if: ${{ false }}
     name: Deploy to Kubernetes
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: build-test-scan-push
 
     steps:
