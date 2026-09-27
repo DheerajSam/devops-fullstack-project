@@ -224,23 +224,6 @@ This project was built to get hands-on experience with:
 - Loki
 - Linux troubleshooting
 
-## Interview Topics
-
-This project provides hands-on examples for explaining:
-
-- How a CI/CD pipeline works
-- Why Docker multi-stage builds are used
-- Why the image is scanned before pushing
-- How Docker image tags are generated
-- How GitHub Actions caching improves build time
-- How Kubernetes Deployments and Services work
-- How rolling updates work
-- How Terraform provisions AWS infrastructure
-- How Prometheus collects application metrics
-- How Grafana visualizes metrics
-- How Trivy detects container vulnerabilities
-- How application health checks are implemented
-
 ## Author
 
 Dheeraj Samudrala
