@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 app.get('/', (req, res) => {
   const version = process.env.APP_VERSION || 'v1.0';
   const hostname = process.env.HOSTNAME || 'local';
-  const environment = process.env.NODE_ENV || 'development';
+  const environment = process.env.APP_ENV || process.env.NODE_ENV || 'local';
 
   res.send(`
     <!DOCTYPE html>
@@ -166,8 +166,6 @@ app.get('/', (req, res) => {
             <span class="arrow">→</span>
             <div class="stage">Tests</div>
             <span class="arrow">→</span>
-            <div class="stage">SonarQube</div>
-            <span class="arrow">→</span>
             <div class="stage">Trivy</div>
             <span class="arrow">→</span>
             <div class="stage">DockerHub</div>
@@ -196,7 +194,7 @@ app.get('/', (req, res) => {
 
           <div class="card">
             <h3>🔐 Security</h3>
-            <p>SonarQube code analysis + Trivy vulnerability scanning</p>
+            <p>Trivy container vulnerability scanning</p>
           </div>
 
           <div class="card">

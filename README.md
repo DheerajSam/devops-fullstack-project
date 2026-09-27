@@ -1,203 +1,248 @@
-# 🚀 Full-Stack DevOps Pipeline — End-to-End Production Architecture
+# Full-Stack DevOps Pipeline
 
-## Project 1 — Full Stack DevOps Pipeline
+A hands-on DevOps project demonstrating CI/CD, Docker containerization, Infrastructure as Code, Kubernetes deployment structure, security scanning, and application observability.
 
 ## Architecture
 
-GitHub Push → GitHub Actions → Docker → DockerHub
+```text
+GitHub Push
+    ↓
+GitHub Actions
+    ↓
+Node.js Tests + Health Check
+    ↓
+Docker Build
+    ↓
+Trivy Security Scan
+    ↓
+DockerHub
+    ↓
+Kubernetes
+    ↓
+Prometheus + Grafana + Loki
+```
 
-↓
+## Technology Stack
 
-Terraform (VPC + EC2 + IAM + SG)
-
-↓
-
-Kubernetes (2 replicas)
-
-↓
-
-Prometheus + Grafana + Loki Monitoring
-
-## Stack
 | Tool | Purpose |
 |---|---|
+| Node.js / Express | Application |
 | GitHub Actions | CI/CD Pipeline |
 | Docker | Containerization |
+| DockerHub | Container Registry |
+| Trivy | Container Vulnerability Scanning |
 | Terraform | AWS Infrastructure as Code |
 | Kubernetes | Container Orchestration |
-| Prometheus + Grafana | Monitoring & Dashboards |
+| Prometheus | Application Metrics |
+| Grafana | Monitoring Dashboards |
 | Loki + Promtail | Log Aggregation |
 
+## CI/CD Pipeline
+
+The current GitHub Actions pipeline performs:
+
+1. Checkout source code
+2. Set up Node.js
+3. Install dependencies
+4. Run Jest tests
+5. Start the application and verify `/health`
+6. Build the Docker image
+7. Scan the image with Trivy
+8. Push the image to DockerHub
+
+The Docker image is scanned before it is pushed to the registry.
+
+Images are tagged with:
+
+- Git commit SHA
+- `latest`
+
+GitHub Actions caching is also enabled to improve Docker build times.
+
+## Docker
+
+The application uses a multi-stage Docker build.
+
+The production image:
+
+- Uses Node.js Alpine
+- Installs production dependencies only
+- Removes npm from the runtime image
+- Runs as the non-root `node` user
+- Exposes port 3000
+
+Example:
+
+```bash
+docker build -t devops-fullstack-app .
+docker run -p 3000:3000 devops-fullstack-app
+```
+
+Health check:
+
+```bash
+curl http://localhost:3000/health
+```
+
+## Application
+
+The application provides a simple DevOps operations dashboard.
+
+Available endpoints:
+
+| Endpoint | Purpose |
+|---|---|
+| `/` | Application dashboard |
+| `/health` | Application health check |
+| `/metrics` | Prometheus metrics |
+
+The application exposes HTTP request count and request duration metrics using the Prometheus client library.
+
 ## Screenshots
-![App](app.png)
-![Grafana](grafana.png)
-![Prometheus](prometheus.png)
-![Loki Logs](loki.png)
-![GitHub Actions](pipeline.png)
 
-## Project 2 — DevSecOps Pipeline (SonarQube + Trivy)
+### Application Dashboard
 
-🔐 DevSecOps Pipeline — Security-First CI/CD with SonarQube + Trivy
+![Application Dashboard](docs/screenshots/application-dashboard.png)
 
-End-to-end DevSecOps implementation — automated code quality and container vulnerability scanning integrated into the CI/CD pipeline. Security gates run before every deployment.
+The dashboard shows application health, version, runtime information, environment, CI/CD stages, metrics, security, and observability information.
 
-🏗️ Architecture
+## Kubernetes
 
-GitHub Push
-     ↓
-SonarQube Code Quality Scan (self-hosted on AWS EC2)
-     ↓
-Trivy Container Vulnerability Scan
-     ↓
-Build & Push Docker Image to DockerHub
-     ↓
-Deploy to Kubernetes
+Kubernetes manifests are available in the `k8s/` directory.
 
+The project includes:
 
-Security is "shifted left" — issues are caught before they reach production, not after.
+- Deployment
+- Service
+- Multiple application replicas
+- Rolling update configuration
 
+The Kubernetes deployment workflow is currently disabled because the AWS/Kubernetes environment is not running continuously.
 
+The Kubernetes configuration is retained for future use and hands-on practice.
 
-🔧 Tech Stack
+## Infrastructure
 
-ToolPurposeGitHub ActionsPipeline orchestrationSonarQubeStatic code analysis — bugs, code smells, security hotspotsTrivyContainer image vulnerability scanning (CVEs)DockerContainerizationDockerHubContainer registryKubernetesDeployment targetAWS EC2Self-hosted SonarQube server
+Terraform configuration is available in the `terraform/` directory.
 
-📁 Repository Structure
+The project was used to provision and work with AWS infrastructure including:
 
+- VPC
+- Subnets
+- Internet Gateway
+- Security Groups
+- EC2
+
+The infrastructure provided a hands-on environment for deploying and testing the application.
+
+## Monitoring and Observability
+
+The application exposes Prometheus metrics through `/metrics`.
+
+Prometheus can collect application metrics and Grafana can be used to visualize:
+
+- HTTP request count
+- Request duration
+- Application health
+- Service performance
+
+Loki and Promtail were also used for centralized application log collection.
+
+## Security
+
+Trivy is integrated into the CI pipeline to scan the Docker image for known vulnerabilities.
+
+The pipeline checks for:
+
+- HIGH vulnerabilities
+- CRITICAL vulnerabilities
+
+The pipeline fails when matching vulnerabilities are detected.
+
+This provides a basic DevSecOps security gate before publishing the image.
+
+## Testing
+
+Jest and Supertest are used for application testing.
+
+Current tests cover:
+
+- `/health`
+- `/`
+
+Run tests locally:
+
+```bash
+npm ci
+npm test
+```
+
+## Repository Structure
+
+```text
 devops-fullstack-project/
+│
 ├── .github/
 │   └── workflows/
-│       └── pipeline.yml        # 4-stage DevSecOps pipeline
+│       └── pipeline.yml
+│
 ├── k8s/
-│   ├── deployment.yaml         # Kubernetes deployment
-│   └── service.yaml            # Kubernetes service
-├── sonar-project.properties    # SonarQube project config
-├── app.js                      # Node.js application
-├── Dockerfile                  # Container build instructions
-└── package.json
+│   ├── deployment.yaml
+│   └── service.yaml
+│
+├── terraform/
+│
+├── tests/
+│   └── app.test.js
+│
+├── docs/
+│   └── screenshots/
+│       └── application-dashboard.png
+│
+├── app.js
+├── Dockerfile
+├── package.json
+├── .dockerignore
+└── .gitignore
+```
 
-🔄 Pipeline Stages
+## What I Practiced
 
-Stage 1 — SonarQube Code Quality Scan ✅
+This project was built to get hands-on experience with:
 
+- Git and GitHub
+- GitHub Actions
+- CI/CD pipelines
+- Docker
+- Docker multi-stage builds
+- Container security scanning
+- Kubernetes
+- Terraform
+- AWS EC2
+- Prometheus
+- Grafana
+- Loki
+- Linux troubleshooting
 
-Checks code for bugs, vulnerabilities, code smells
-Uses self-hosted SonarQube running as Docker container on AWS EC2
-Configured via sonar-project.properties
-Pipeline proceeds only if quality gate passes
+## Interview Topics
 
+This project provides hands-on examples for explaining:
 
-Stage 2 — Trivy Container Security Scan ✅
+- How a CI/CD pipeline works
+- Why Docker multi-stage builds are used
+- Why the image is scanned before pushing
+- How Docker image tags are generated
+- How GitHub Actions caching improves build time
+- How Kubernetes Deployments and Services work
+- How rolling updates work
+- How Terraform provisions AWS infrastructure
+- How Prometheus collects application metrics
+- How Grafana visualizes metrics
+- How Trivy detects container vulnerabilities
+- How application health checks are implemented
 
+## Author
 
-Builds Docker image locally on GitHub Actions runner
-Scans image for known CVEs (Common Vulnerabilities and Exposures)
-Reports CRITICAL and HIGH severity vulnerabilities
-Industry-standard tool used by enterprises like Aqua Security
+Dheeraj Samudrala
 
-
-Stage 3 — Build and Push Docker Image ✅
-
-
-Only runs after both security scans pass
-Tags image with build number for versioning
-Pushes to DockerHub
-
-
-Stage 4 — Deploy to Kubernetes ✅
-
-
-SSHs into EC2 running Kubernetes
-Applies latest manifests from k8s/ folder
-Rolling update — zero downtime deployment
-
-
-📸 Screenshots
-
-1. Full Pipeline — All 4 Stages Green
-Complete DevSecOps pipeline passing all security gates — SonarQube quality scan, Trivy vulnerability scan, Docker build, and Kubernetes deployment all completing successfully in under 2 minutes.
-
-![Pipeline Success](pipeline-success.png)
-
-2. SonarQube Dashboard — Code Analysis Results
-Self-hosted SonarQube running on AWS EC2 showing code quality metrics — bugs, vulnerabilities, code smells, and security hotspots detected in the Node.js application source code.
-
-![Sonarqube Dashboard](sonarqube-dashboard.png)
-
-3. Trivy Scan Output — Vulnerability Report
-Trivy scanning the Docker image for CVEs — showing CRITICAL and HIGH severity vulnerabilities found in OS packages and application dependencies.
-
-![Trivy Scan](trivy-scan.png)
-
-🚀 How to Reproduce
-
-1. Set Up SonarQube on EC2
-
-bash
-# SSH into EC2
-ssh -i ~/.ssh/devops-key ubuntu@EC2-IP
-
-# Install Docker
-sudo apt update && sudo apt install docker.io -y
-sudo systemctl start docker
-sudo sysctl -w vm.max_map_count=262144
-
-# Run SonarQube
-sudo docker run -d \
-  --name sonarqube \
-  -p 9000:9000 \
-  -e SONAR_CE_JAVAOPTS="-Xmx512m" \
-  -e SONAR_WEB_JAVAOPTS="-Xmx512m" \
-  sonarqube:lts-community
-
-# Access at http://EC2-IP:9000 (admin/admin)
-
-2. Generate SonarQube Token
-
-
-Login to SonarQube → My Account → Security
-Generate token → copy it
-
-
-3. Add GitHub Secrets
-
-<img width="672" height="297" alt="image" src="https://github.com/user-attachments/assets/ee12c1b7-4d75-4d16-9604-20fc9b4ab9f9" />
-
-4. Push Code — Pipeline Triggers Automatically
-
-git add .
-git commit -m "Trigger DevSecOps pipeline"
-git push origin main
-
-🔐 Security Concepts Demonstrated
-
-<img width="678" height="250" alt="image" src="https://github.com/user-attachments/assets/bf24e82a-0900-4688-b7f1-397e15b9e566" />
-
-🧹 Cleanup
-
-# Destroy EC2 (SonarQube server)
-
-cd terraform
-
-terraform destroy
-
-💡 Interview Talking Points
-
-
-"What is DevSecOps?" — Integrating security into every stage of the DevOps pipeline rather than treating it as a separate phase at the end
-
-"What is Trivy?" — An open-source vulnerability scanner for containers, file systems, and Git repos — scans for CVEs in OS packages and application dependencies
-
-"What is SonarQube?" — A static code analysis tool that detects bugs, security vulnerabilities, and code smells before code reaches production
-
-"What is shift-left security?" — Moving security checks earlier in the development process — catching vulnerabilities at code commit rather than after deployment
-
-
-👤 Author
-
-Dheeraj Samudrala — DevOps Engineer
-
-
-LinkedIn: linkedin.com/in/dheeraj-samudrala-b99b9540
-GitHub: github.com/DheerajSam
-
+GitHub: https://github.com/DheerajSam
